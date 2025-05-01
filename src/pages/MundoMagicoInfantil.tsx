@@ -1,9 +1,8 @@
-
 import React from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import { Baby, Book, Rocket, Puzzle, Toy } from 'lucide-react';
+import { Baby, Book, Rocket, Puzzle, Backpack } from 'lucide-react';
 
 const MundoMagicoInfantil: React.FC = () => {
   // Sample products - in a real application, these would come from an API or database
