@@ -1,13 +1,24 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, Search, ShoppingCart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/sonner';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Você saiu da sua conta");
+    navigate('/');
   };
 
   return (
@@ -26,6 +37,18 @@ const NavBar: React.FC = () => {
             <Link to="/oficina-criativa" className="text-gray-600 hover:text-gray-900">Oficina Criativa</Link>
             <Link to="/lar-doce-lar" className="text-gray-600 hover:text-gray-900">Lar Doce Lar</Link>
             <Link to="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link>
+            
+            {user ? (
+              <>
+                <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">Minha Conta</Link>
+                <Button onClick={handleSignOut} variant="ghost" className="text-gray-600 hover:text-gray-900">Sair</Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-gray-600 hover:text-gray-900">Login</Link>
+                <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">Registrar</Link>
+              </>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -54,6 +77,18 @@ const NavBar: React.FC = () => {
             <Link to="/oficina-criativa" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Oficina Criativa</Link>
             <Link to="/lar-doce-lar" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Lar Doce Lar</Link>
             <Link to="/blog" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Blog</Link>
+            
+            {user ? (
+              <>
+                <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Minha Conta</Link>
+                <button onClick={handleSignOut} className="text-left text-gray-600 hover:text-gray-900 py-2">Sair</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Login</Link>
+                <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium py-2" onClick={toggleMenu}>Registrar</Link>
+              </>
+            )}
           </div>
         </nav>
       )}
