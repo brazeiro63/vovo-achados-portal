@@ -9,7 +9,8 @@ import {
   Package, 
   Users, 
   ShoppingBag, 
-  Settings 
+  Settings,
+  Upload
 } from "lucide-react";
 
 const AdminLayout = () => {
@@ -35,6 +36,7 @@ const AdminLayout = () => {
     if (path === '/admin') return 'produtos';
     if (path === '/admin/usuarios') return 'usuarios';
     if (path.startsWith('/admin/loja')) return 'lojas';
+    if (path === '/admin/importar-produtos') return 'importar';
     if (path === '/admin/configuracoes') return 'configuracoes';
     return 'produtos';
   };
@@ -48,11 +50,17 @@ const AdminLayout = () => {
           <h1 className="text-3xl font-bold text-gray-900">Administração</h1>
           
           <Tabs value={getActiveTab()} className="mt-6">
-            <TabsList className="grid grid-cols-4 sm:grid-cols-4 w-full max-w-xl">
+            <TabsList className="grid grid-cols-5 sm:grid-cols-5 w-full max-w-2xl">
               <TabsTrigger value="produtos" asChild>
                 <Link to="/admin" className="flex items-center gap-2">
                   <Package className="h-4 w-4" />
                   <span className="hidden sm:inline">Produtos</span>
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="importar" asChild>
+                <Link to="/admin/importar-produtos" className="flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  <span className="hidden sm:inline">Importar</span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger value="usuarios" asChild>

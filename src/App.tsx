@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 // Admin Components
 import AdminLayout from "./components/AdminLayout";
 import ProductsManagement from "./pages/Admin/ProductsManagement";
+import BatchProductImport from "./pages/Admin/BatchProductImport";
 import UsersManagement from "./pages/Admin/UsersManagement";
 import StoreApiManagement from "./pages/Admin/StoreApiManagement";
 import SettingsManagement from "./pages/Admin/SettingsManagement";
@@ -44,6 +45,7 @@ const App = () => (
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<ProductsManagement />} />
+              <Route path="importar-produtos" element={<BatchProductImport />} />
               <Route path="usuarios" element={<UsersManagement />} />
               <Route path="loja/:storeId" element={<StoreApiManagement />} />
               <Route path="configuracoes" element={<SettingsManagement />} />

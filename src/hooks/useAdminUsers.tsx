@@ -35,7 +35,7 @@ export const useAdminUsers = () => {
       }
       
       // Cast the returned data to include the role property
-      return (profiles as unknown) as UserProfile[];
+      return profiles as UserProfile[];
     },
   });
 
@@ -53,8 +53,7 @@ export const useAdminUsers = () => {
       if (error) throw error;
       
       toast.success("Perfil de usuário atualizado com sucesso");
-      // Cast the returned data to include the role property
-      return (data as unknown) as UserProfile;
+      return data as UserProfile;
     } catch (error) {
       console.error("Error updating user profile:", error);
       toast.error("Falha ao atualizar perfil de usuário");
