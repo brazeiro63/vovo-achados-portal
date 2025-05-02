@@ -38,7 +38,8 @@ export const useAdminUsers = () => {
       const processedProfiles = profiles.map(profile => {
         return {
           ...profile,
-          role: profile.role || 'user' // Ensure role has a default value if not present
+          // Type assertion to access role property safely
+          role: (profile as any).role || 'user' // Ensure role has a default value if not present
         } as UserProfile;
       });
       
@@ -62,7 +63,8 @@ export const useAdminUsers = () => {
       // Ensure role is set properly in the returned data
       const processedProfile = {
         ...data,
-        role: data.role || 'user'
+        // Type assertion to access role property safely
+        role: (data as any).role || 'user'
       } as UserProfile;
       
       toast.success("Perfil de usuário atualizado com sucesso");
