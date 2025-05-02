@@ -46,7 +46,7 @@ const Index: React.FC = () => {
         <section className="bg-vovo-neutral py-16">
           <div className="container-custom">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-6">Achados da Vovó</h1>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-6">Casa Digital Shop</h1>
               <p className="text-xl text-gray-600">
                 Uma curadoria especial de produtos selecionados com o carinho e 
                 a sabedoria de quem sabe escolher o melhor para você e sua família.

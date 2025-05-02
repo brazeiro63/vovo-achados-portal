@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About */}
           <div>
-            <h3 className="text-xl font-playfair font-semibold mb-4">Achados da Vovó</h3>
+            <h3 className="text-xl font-playfair font-semibold mb-4">Casa Digital Shop</h3>
             <p className="text-gray-600 mb-4">
               Curadoria especial de produtos selecionados com carinho para 
               encantar crianças, inspirar projetos e aconchegar lares.
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <Mail size={18} className="text-gray-600" />
-                <span className="text-gray-600">contato@achadosdavovo.com.br</span>
+                <span className="text-gray-600">contato@casadigitalshop.com.br</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin size={18} className="text-gray-600" />
@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-200 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 text-sm mb-4 md:mb-0">
-              © {currentYear} Achados da Vovó. Todos os direitos reservados.
+              © {currentYear} Casa Digital Shop. Todos os direitos reservados.
             </p>
             <p className="text-gray-600 text-sm">
               Este site contém links de afiliados. Ao clicar nestes links e realizar uma compra, 

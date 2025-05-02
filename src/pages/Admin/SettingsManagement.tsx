@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Card, 
@@ -19,8 +18,8 @@ const SettingsManagement = () => {
   
   // These would typically come from database/API
   const [settings, setSettings] = useState({
-    siteName: "Achados da Vovó",
-    contactEmail: "contato@achadosdavovo.com.br",
+    siteName: "Casa Digital Shop",
+    contactEmail: "contato@casadigitalshop.com.br",
     enableUserRegistration: true,
     requireEmailVerification: false,
     maintenanceMode: false
