@@ -14,6 +14,16 @@ export type UserProfile = {
   created_at?: string;
 };
 
+// Define a type for the raw profile data coming from the database
+type RawProfile = {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  role: string | null;
+  updated_at: string | null;
+};
+
 export const useAdminUsers = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
@@ -43,11 +53,11 @@ export const useAdminUsers = () => {
         }
         
         // Garantimos que a propriedade role esteja disponível
-        const processedProfiles = profiles.map(profile => {
+        const processedProfiles = (profiles as RawProfile[]).map(profile => {
           return {
             ...profile,
             // Garantir que o papel tenha um valor padrão se não estiver presente
-            role: (profile as any).role || 'user'
+            role: profile.role === 'admin' ? 'admin' : 'user'
           } as UserProfile;
         });
         
