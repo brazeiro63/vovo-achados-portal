@@ -26,45 +26,62 @@ export const useAdminUsers = () => {
       // Como não podemos consultar diretamente auth.users do cliente, usaremos um endpoint personalizado
       // que busca informações adicionais de usuário da tabela profiles
       
-      // Consultamos os perfis, que contêm as informações de usuário que podemos acessar
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select('*');
-      
-      if (error) {
-        console.error("Error fetching users:", error);
+      try {
+        // Consultamos os perfis, que contêm as informações de usuário que podemos acessar
+        const { data: profiles, error } = await supabase
+          .from('profiles')
+          .select('*');
+        
+        if (error) {
+          console.error("Error fetching users:", error);
+          toast.error("Falha ao carregar usuários");
+          throw new Error("Failed to fetch users");
+        }
+        
+        if (!profiles) {
+          return [] as UserProfile[];
+        }
+        
+        // Garantimos que a propriedade role esteja disponível
+        const processedProfiles = profiles.map(profile => {
+          return {
+            ...profile,
+            // Garantir que o papel tenha um valor padrão se não estiver presente
+            role: (profile as any).role || 'user'
+          } as UserProfile;
+        });
+        
+        try {
+          // Obtemos informações de usuário do Supabase Auth
+          const { data, error: authError } = await supabase.auth.admin.listUsers();
+          
+          if (authError || !data || !data.users) {
+            console.error("Error fetching auth users:", authError);
+            return processedProfiles; // Retorna os perfis mesmo sem informações de autenticação
+          }
+          
+          const authUsers = data.users;
+          
+          // Combina os dados de perfil com informações de auth.users
+          const enrichedProfiles = processedProfiles.map(profile => {
+            const authUser = authUsers.find(user => user.id === profile.id);
+            return {
+              ...profile,
+              email: authUser?.email,
+              created_at: authUser?.created_at
+            } as UserProfile;
+          });
+          
+          return enrichedProfiles;
+        } catch (authError) {
+          console.error("Error processing auth users:", authError);
+          return processedProfiles; // Retorna os perfis mesmo sem informações de autenticação
+        }
+      } catch (error) {
+        console.error("Error in usersQuery:", error);
         toast.error("Falha ao carregar usuários");
-        throw new Error("Failed to fetch users");
+        return [] as UserProfile[];
       }
-      
-      // Garantimos que a propriedade role esteja disponível
-      const processedProfiles = profiles.map(profile => {
-        return {
-          ...profile,
-          // Garantir que o papel tenha um valor padrão se não estiver presente
-          role: (profile as any).role || 'user'
-        } as UserProfile;
-      });
-      
-      // Obtemos informações de usuário do Supabase Auth
-      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
-      
-      if (authError) {
-        console.error("Error fetching auth users:", authError);
-        return processedProfiles; // Retorna os perfis mesmo sem informações de autenticação
-      }
-      
-      // Combina os dados de perfil com informações de auth.users
-      const enrichedProfiles = processedProfiles.map(profile => {
-        const authUser = authUsers.find(user => user.id === profile.id);
-        return {
-          ...profile,
-          email: authUser?.email,
-          created_at: authUser?.created_at
-        } as UserProfile;
-      });
-      
-      return enrichedProfiles;
     },
   });
 
