@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
@@ -94,6 +93,7 @@ const MundoMagicoInfantil: React.FC = () => {
                     store={product.store}
                     url={product.url}
                     color={product.color}
+                    price={product.price}
                   />
                 ))}
               </div>
