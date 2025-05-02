@@ -65,20 +65,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkUserRole = async (userId: string) => {
     try {
+      // Query the profiles table to check if the user is an admin
       const { data, error } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')  // Select all columns to ensure we get any that exist
         .eq('id', userId)
         .single();
         
       if (error) {
-        console.error("Error fetching user role:", error);
+        console.error("Error fetching user profile:", error);
         setIsAdmin(false);
         return;
       }
       
-      // Check if data exists and has the role property before accessing it
-      setIsAdmin(data && data.role === 'admin');
+      // Safely check if the data has a role property and if it's 'admin'
+      // Using optional chaining and type assertion to handle potential missing fields
+      const profile = data as any;
+      setIsAdmin(profile && profile.role === 'admin');
     } catch (err) {
       console.error("Exception when checking user role:", err);
       setIsAdmin(false);
