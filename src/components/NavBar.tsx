@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -41,6 +41,13 @@ const NavBar: React.FC = () => {
             {user ? (
               <>
                 <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">Minha Conta</Link>
+                
+                {isAdmin && (
+                  <Link to="/admin" className="text-blue-600 hover:text-blue-700 font-medium">
+                    Administração
+                  </Link>
+                )}
+                
                 <Button onClick={handleSignOut} variant="ghost" className="text-gray-600 hover:text-gray-900">Sair</Button>
               </>
             ) : (
@@ -81,6 +88,13 @@ const NavBar: React.FC = () => {
             {user ? (
               <>
                 <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 py-2" onClick={toggleMenu}>Minha Conta</Link>
+                
+                {isAdmin && (
+                  <Link to="/admin" className="text-blue-600 hover:text-blue-700 font-medium py-2" onClick={toggleMenu}>
+                    Administração
+                  </Link>
+                )}
+                
                 <button onClick={handleSignOut} className="text-left text-gray-600 hover:text-gray-900 py-2">Sair</button>
               </>
             ) : (

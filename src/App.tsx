@@ -15,6 +15,13 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 
+// Admin Components
+import AdminLayout from "./components/AdminLayout";
+import ProductsManagement from "./pages/Admin/ProductsManagement";
+import UsersManagement from "./pages/Admin/UsersManagement";
+import StoreApiManagement from "./pages/Admin/StoreApiManagement";
+import SettingsManagement from "./pages/Admin/SettingsManagement";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -33,6 +40,15 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<ProductsManagement />} />
+              <Route path="usuarios" element={<UsersManagement />} />
+              <Route path="loja/:storeId" element={<StoreApiManagement />} />
+              <Route path="configuracoes" element={<SettingsManagement />} />
+            </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
