@@ -15,7 +15,8 @@ export function usePublishedBlogPosts() {
         .from("blog_posts")
         .select("*")
         .order("published_at", { ascending: false })
-        .is("published_at", "not.null")
+        // Modificação: Usar isNot para verificar se published_at não é nulo
+        .not("published_at", "is", null)
         .lt("published_at", new Date().toISOString());
 
       if (error) {
@@ -37,7 +38,8 @@ export function usePublishedBlogPostBySlug(slug: string) {
         .from("blog_posts")
         .select("*")
         .eq("slug", slug)
-        .is("published_at", "not.null")
+        // Modificação: Usar not para verificar se published_at não é nulo
+        .not("published_at", "is", null)
         .lt("published_at", new Date().toISOString())
         .single();
 
