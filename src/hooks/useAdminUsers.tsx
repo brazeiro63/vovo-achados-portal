@@ -24,6 +24,13 @@ type RawProfile = {
   updated_at: string | null;
 };
 
+// Define a type for auth users to avoid 'never' type errors
+type AuthUser = {
+  id: string;
+  email?: string;
+  created_at?: string;
+};
+
 export const useAdminUsers = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
@@ -70,7 +77,7 @@ export const useAdminUsers = () => {
             return processedProfiles; // Retorna os perfis mesmo sem informações de autenticação
           }
           
-          const authUsers = data.users;
+          const authUsers = data.users as AuthUser[];
           
           // Combina os dados de perfil com informações de auth.users
           const enrichedProfiles = processedProfiles.map(profile => {
