@@ -20,7 +20,7 @@ export const useStoreApi = (storeId: string) => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('store_id', storeId);
+        .eq('store', storeId); // Use 'store' column instead of 'store_id'
         
       if (error) throw error;
       

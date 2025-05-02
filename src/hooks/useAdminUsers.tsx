@@ -34,8 +34,15 @@ export const useAdminUsers = () => {
         throw new Error("Failed to fetch users");
       }
       
-      // Cast the returned data to include the role property
-      return profiles as UserProfile[];
+      // Ensure the role property is available or set a default
+      const processedProfiles = profiles.map(profile => {
+        return {
+          ...profile,
+          role: profile.role || 'user' // Ensure role has a default value if not present
+        } as UserProfile;
+      });
+      
+      return processedProfiles;
     },
   });
 
@@ -52,8 +59,14 @@ export const useAdminUsers = () => {
         
       if (error) throw error;
       
+      // Ensure role is set properly in the returned data
+      const processedProfile = {
+        ...data,
+        role: data.role || 'user'
+      } as UserProfile;
+      
       toast.success("Perfil de usuário atualizado com sucesso");
-      return data as UserProfile;
+      return processedProfile;
     } catch (error) {
       console.error("Error updating user profile:", error);
       toast.error("Falha ao atualizar perfil de usuário");

@@ -126,7 +126,7 @@ const BatchProductImport = () => {
         )}
 
         {validatedProducts && (
-          <Alert variant="success" className="bg-green-50 border-green-300">
+          <Alert className="bg-green-50 border-green-300">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             <AlertDescription>
               {`${validatedProducts.length} produtos validados e prontos para importação.`}
