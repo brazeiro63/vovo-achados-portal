@@ -53,7 +53,8 @@ const ProductsManagement = () => {
     store: "",
     url: "",
     color: "",
-    category: ""
+    category: "",
+    price: 0
   });
 
   const filteredProducts = products.filter(product => 
@@ -64,7 +65,15 @@ const ProductsManagement = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Tratar o campo de preço para garantir formato correto de número
+    if (name === 'price') {
+      // Substituir vírgula por ponto e converter para número
+      const numericValue = parseFloat(value.replace(',', '.')) || 0;
+      setFormData(prev => ({ ...prev, [name]: numericValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleSelectChange = (name: string, value: string) => {
@@ -79,7 +88,8 @@ const ProductsManagement = () => {
       store: "",
       url: "",
       color: "",
-      category: ""
+      category: "",
+      price: 0
     });
     setIsDialogOpen(true);
   };
@@ -92,7 +102,8 @@ const ProductsManagement = () => {
       store: product.store,
       url: product.url,
       color: product.color,
-      category: product.category
+      category: product.category,
+      price: product.price || 0
     });
     setIsDialogOpen(true);
   };
@@ -119,6 +130,15 @@ const ProductsManagement = () => {
       deleteProduct(productToDelete.id);
       setIsDeleteDialogOpen(false);
     }
+  };
+
+  // Formatação de preço em BRL
+  const formatPrice = (price: number | null | undefined) => {
+    if (price === null || price === undefined) return "-";
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
   };
 
   return (
@@ -157,6 +177,7 @@ const ProductsManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Título</TableHead>
+                <TableHead>Preço</TableHead>
                 <TableHead>Loja</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Cor</TableHead>
@@ -167,6 +188,7 @@ const ProductsManagement = () => {
               {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.title}</TableCell>
+                  <TableCell>{formatPrice(product.price)}</TableCell>
                   <TableCell>{product.store}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.color}</TableCell>
@@ -208,6 +230,23 @@ const ProductsManagement = () => {
                   id="title"
                   name="title"
                   value={formData.title}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="price" className="text-right">
+                  Preço (R$)
+                </Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.price}
                   onChange={handleInputChange}
                   className="col-span-3"
                   required

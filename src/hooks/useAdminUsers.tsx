@@ -22,8 +22,11 @@ export const useAdminUsers = () => {
   const usersQuery = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      // We need to join the auth.users and public.profiles tables
-      // But since we can't directly query auth.users from client, we'll get what we can from profiles
+      // Obter todos os usuários do auth.users através de join com profiles
+      // Como não podemos consultar diretamente auth.users do cliente, usaremos um endpoint personalizado
+      // que busca informações adicionais de usuário da tabela profiles
+      
+      // Consultamos os perfis, que contêm as informações de usuário que podemos acessar
       const { data: profiles, error } = await supabase
         .from('profiles')
         .select('*');
@@ -34,16 +37,34 @@ export const useAdminUsers = () => {
         throw new Error("Failed to fetch users");
       }
       
-      // Ensure the role property is available or set a default
+      // Garantimos que a propriedade role esteja disponível
       const processedProfiles = profiles.map(profile => {
         return {
           ...profile,
-          // Type assertion to access role property safely
-          role: (profile as any).role || 'user' // Ensure role has a default value if not present
+          // Garantir que o papel tenha um valor padrão se não estiver presente
+          role: (profile as any).role || 'user'
         } as UserProfile;
       });
       
-      return processedProfiles;
+      // Obtemos informações de usuário do Supabase Auth
+      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+      
+      if (authError) {
+        console.error("Error fetching auth users:", authError);
+        return processedProfiles; // Retorna os perfis mesmo sem informações de autenticação
+      }
+      
+      // Combina os dados de perfil com informações de auth.users
+      const enrichedProfiles = processedProfiles.map(profile => {
+        const authUser = authUsers.find(user => user.id === profile.id);
+        return {
+          ...profile,
+          email: authUser?.email,
+          created_at: authUser?.created_at
+        } as UserProfile;
+      });
+      
+      return enrichedProfiles;
     },
   });
 
@@ -60,10 +81,10 @@ export const useAdminUsers = () => {
         
       if (error) throw error;
       
-      // Ensure role is set properly in the returned data
+      // Garantir que role esteja definido corretamente nos dados retornados
       const processedProfile = {
         ...data,
-        // Type assertion to access role property safely
+        // Garantir que o papel tenha um valor padrão se não estiver presente
         role: (data as any).role || 'user'
       } as UserProfile;
       
@@ -78,11 +99,20 @@ export const useAdminUsers = () => {
     }
   };
   
-  // Delete user (this doesn't actually delete the auth user, just their profile)
-  // In a real app, you might want to use Supabase admin functions to fully delete the user
+  // Delete user (isso não exclui realmente o usuário de auth, apenas seu perfil)
+  // Em um aplicativo real, você pode querer usar funções de administrador do Supabase para excluir completamente o usuário
   const deleteUser = async (id: string) => {
     setIsSubmitting(true);
     try {
+      // Primeiro, tente excluir o usuário do sistema de autenticação
+      const { error: authError } = await supabase.auth.admin.deleteUser(id);
+      
+      if (authError) {
+        console.error("Error deleting auth user:", authError);
+        toast.error("Falha ao excluir usuário do sistema de autenticação");
+      }
+      
+      // Em seguida, exclua o perfil do usuário
       const { error } = await supabase
         .from('profiles')
         .delete()

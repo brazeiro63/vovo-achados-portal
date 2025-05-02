@@ -51,6 +51,7 @@ const UsersManagement = () => {
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     full_name: "",
     username: "",
+    email: "",
     role: "user"
   });
 
@@ -74,6 +75,7 @@ const UsersManagement = () => {
     setFormData({
       full_name: user.full_name || "",
       username: user.username || "",
+      email: user.email || "",
       role: user.role
     });
     setIsDialogOpen(true);
@@ -157,7 +159,7 @@ const UsersManagement = () => {
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4" />
-                      {user.username || user.email || "Sem email"}
+                      {user.email || user.username || "Sem email"}
                     </div>
                   </TableCell>
                   <TableCell>{user.full_name || "-"}</TableCell>
@@ -207,6 +209,20 @@ const UsersManagement = () => {
           
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  value={formData.email || ""}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                  disabled
+                />
+              </div>
+              
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="username" className="text-right">
                   Usuário
