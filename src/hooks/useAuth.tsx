@@ -64,19 +64,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const checkUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+        
+      if (error) {
+        console.error("Error fetching user role:", error);
+        setIsAdmin(false);
+        return;
+      }
       
-    if (error) {
-      console.error("Error fetching user role:", error);
+      // Check if data exists and has the role property before accessing it
+      setIsAdmin(data && data.role === 'admin');
+    } catch (err) {
+      console.error("Exception when checking user role:", err);
       setIsAdmin(false);
-      return;
     }
-    
-    setIsAdmin(data?.role === 'admin');
   };
 
   const signOut = async () => {

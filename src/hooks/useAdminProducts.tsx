@@ -18,7 +18,7 @@ export const useAdminProducts = (storeFilter?: string) => {
       let query = supabase.from("products").select("*");
       
       if (storeFilter) {
-        query = query.eq("store_id", storeFilter.toLowerCase());
+        query = query.eq("store_id", storeFilter);
       }
       
       const { data, error } = await query.order('created_at', { ascending: false });
