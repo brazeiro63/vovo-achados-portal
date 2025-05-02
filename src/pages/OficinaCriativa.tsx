@@ -95,6 +95,7 @@ const OficinaCriativa: React.FC = () => {
                     store={product.store}
                     url={product.url}
                     color={product.color}
+                    price={product.price}
                   />
                 ))}
               </div>
