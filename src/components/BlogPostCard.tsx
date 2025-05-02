@@ -4,15 +4,16 @@ import { Link } from 'react-router-dom';
 import { Calendar, Tag } from 'lucide-react';
 
 interface BlogPostCardProps {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   image: string;
   date: string;
   category: string;
+  slug: string;
 }
 
-const BlogPostCard: React.FC<BlogPostCardProps> = ({ id, title, excerpt, image, date, category }) => {
+const BlogPostCard: React.FC<BlogPostCardProps> = ({ title, excerpt, image, date, category, slug }) => {
   // Determine category badge color based on category
   const categoryColor = 
     category === 'Infantil' 
@@ -43,7 +44,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ id, title, excerpt, image, 
         </div>
         <h3 className="text-xl font-playfair font-semibold mb-2 line-clamp-2">{title}</h3>
         <p className="text-gray-600 mb-4 line-clamp-3">{excerpt}</p>
-        <Link to={`/blog/${id}`} className="text-gray-800 font-medium hover:underline">
+        <Link to={`/blog/${slug}`} className="text-gray-800 font-medium hover:underline">
           Leia mais
         </Link>
       </div>

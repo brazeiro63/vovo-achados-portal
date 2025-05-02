@@ -1,74 +1,34 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import BlogPostCard from '../components/BlogPostCard';
 import { Search } from 'lucide-react';
+import { usePublishedBlogPosts } from '@/hooks/useBlogPosts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Blog: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('Todos');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  const { data: blogPosts, isLoading, isError } = usePublishedBlogPosts();
 
-  // Sample blog posts - in a real application, these would come from an API or database
-  const blogPosts = [
-    {
-      id: 1,
-      title: 'Os 5 Brinquedos que Todo Pequeno Deve Experimentar',
-      excerpt: 'Selecionamos os melhores brinquedos que estimulam a criatividade e desenvolvimento infantil, com opções para diferentes idades.',
-      image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&auto=format&fit=crop',
-      date: '15 Abril 2025',
-      category: 'Infantil',
-    },
-    {
-      id: 2,
-      title: 'Guia Completo para Montar seu Ateliê em Casa',
-      excerpt: 'Descubra como transformar aquele espaço sem uso em um ateliê funcional para seus projetos de artesanato e pequenos negócios.',
-      image: 'https://images.unsplash.com/photo-1513708929605-6dd0e1b081bd?w=800&auto=format&fit=crop',
-      date: '28 Março 2025',
-      category: 'Empreendedorismo',
-    },
-    {
-      id: 3,
-      title: 'Transforme seu Quarto de Hóspedes em uma Suíte de Hotel Boutique',
-      excerpt: 'Dicas e produtos para criar uma experiência de hospedagem de luxo para seus convidados sem gastar uma fortuna.',
-      image: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&auto=format&fit=crop',
-      date: '10 Março 2025',
-      category: 'Casa',
-    },
-    {
-      id: 4,
-      title: 'Materiais Montessori que Você Pode Fazer em Casa',
-      excerpt: 'Aprenda a criar brinquedos e jogos pedagógicos usando materiais simples que você já tem em casa. Economia e aprendizado!',
-      image: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop',
-      date: '02 Março 2025',
-      category: 'Infantil',
-    },
-    {
-      id: 5,
-      title: 'As Melhores Ferramentas para Quem Trabalha com Madeira',
-      excerpt: 'Uma análise detalhada das ferramentas essenciais para marcenaria iniciante e projetos de média complexidade.',
-      image: 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=800&auto=format&fit=crop',
-      date: '19 Fevereiro 2025',
-      category: 'Empreendedorismo',
-    },
-    {
-      id: 6,
-      title: 'Mesa Posta: Como Montar uma Mesa de Jantar Elegante',
-      excerpt: 'Guia completo com dicas de decoração, utensílios e arranjos para deixar sua mesa de jantar digna de revista.',
-      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&auto=format&fit=crop',
-      date: '05 Fevereiro 2025',
-      category: 'Casa',
-    },
-  ];
+  // Filtragem de posts por categoria e busca
+  const filteredPosts = blogPosts?.filter(post => {
+    const matchesCategory = activeCategory === 'Todos' || post.category === activeCategory;
+    const matchesSearch = searchQuery === '' || 
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-  // Filter posts based on active category
-  const filteredPosts = activeCategory === 'Todos' 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === activeCategory);
+  // Categorias únicas dos posts
+  const categories = blogPosts 
+    ? ['Todos', ...Array.from(new Set(blogPosts.map(post => post.category)))]
+    : ['Todos', 'Infantil', 'Empreendedorismo', 'Casa'];
 
-  // Categories
-  const categories = ['Todos', 'Infantil', 'Empreendedorismo', 'Casa'];
-
-  // Determine category badge color based on name
+  // Determina a cor da categoria com base no nome
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Infantil':
@@ -101,6 +61,8 @@ const Blog: React.FC = () => {
                 type="text" 
                 placeholder="Buscar no blog..." 
                 className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="absolute right-3 top-3 text-gray-400" size={20} />
             </div>
@@ -131,22 +93,46 @@ const Blog: React.FC = () => {
         {/* Blog Posts Grid */}
         <section className="py-12 bg-gray-50">
           <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post) => (
-                <BlogPostCard
-                  key={post.id}
-                  id={post.id}
-                  title={post.title}
-                  excerpt={post.excerpt}
-                  image={post.image}
-                  date={post.date}
-                  category={post.category}
-                />
-              ))}
-            </div>
-
-            {/* No Results Message */}
-            {filteredPosts.length === 0 && (
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="bg-white rounded-lg overflow-hidden shadow-md">
+                    <Skeleton className="h-52 w-full" />
+                    <div className="p-6">
+                      <Skeleton className="h-4 w-24 mb-2" />
+                      <Skeleton className="h-6 w-full mb-4" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-3/4 mb-4" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="text-center py-16">
+                <h3 className="text-2xl font-playfair mb-2">Erro ao carregar posts</h3>
+                <p className="text-gray-600">Não foi possível carregar os posts do blog. Tente novamente mais tarde.</p>
+              </div>
+            ) : filteredPosts && filteredPosts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPosts.map((post) => (
+                  <BlogPostCard
+                    key={post.id}
+                    id={post.id}
+                    title={post.title}
+                    excerpt={post.excerpt}
+                    image={post.image}
+                    date={new Date(post.published_at || post.created_at).toLocaleDateString('pt-BR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                    category={post.category}
+                    slug={post.slug}
+                  />
+                ))}
+              </div>
+            ) : (
               <div className="text-center py-16">
                 <h3 className="text-2xl font-playfair mb-2">Nenhum post encontrado</h3>
                 <p className="text-gray-600">Tente selecionar outra categoria ou fazer uma busca diferente.</p>

@@ -10,7 +10,8 @@ import {
   Users, 
   ShoppingBag, 
   Settings,
-  Upload
+  Upload,
+  BookOpen
 } from "lucide-react";
 
 const AdminLayout = () => {
@@ -38,6 +39,7 @@ const AdminLayout = () => {
     if (path.startsWith('/admin/loja')) return 'lojas';
     if (path === '/admin/importar-produtos') return 'importar';
     if (path === '/admin/configuracoes') return 'configuracoes';
+    if (path.startsWith('/admin/blog')) return 'blog';
     return 'produtos';
   };
 
@@ -50,7 +52,7 @@ const AdminLayout = () => {
           <h1 className="text-3xl font-bold text-gray-900">Administração</h1>
           
           <Tabs value={getActiveTab()} className="mt-6">
-            <TabsList className="grid grid-cols-5 sm:grid-cols-5 w-full max-w-2xl">
+            <TabsList className="grid grid-cols-6 sm:grid-cols-6 w-full max-w-3xl">
               <TabsTrigger value="produtos" asChild>
                 <Link to="/admin" className="flex items-center gap-2">
                   <Package className="h-4 w-4" />
@@ -73,6 +75,12 @@ const AdminLayout = () => {
                 <Link to="/admin/loja/amazon" className="flex items-center gap-2">
                   <ShoppingBag className="h-4 w-4" />
                   <span className="hidden sm:inline">Lojas</span>
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="blog" asChild>
+                <Link to="/admin/blog" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="hidden sm:inline">Blog</span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger value="configuracoes" asChild>
