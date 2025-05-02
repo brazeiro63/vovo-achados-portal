@@ -1,64 +1,30 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { Home, LampDesk, Bed, Sofa, Grid2X2 } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const LarDoceLar: React.FC = () => {
-  // Sample products - in a real application, these would come from an API or database
-  const products = [
-    {
-      id: 1,
-      title: 'Conjunto de Almofadas Decorativas - 4 peças',
-      image: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 2,
-      title: 'Kit de Jogos Americanos Rústicos - 6 unidades',
-      image: 'https://images.unsplash.com/photo-1586208958839-06c17cacdf08?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 3,
-      title: 'Luminária de Mesa Estilo Vintage',
-      image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&auto=format&fit=crop',
-      store: 'Shopee',
-      url: 'https://www.shopee.com.br',
-    },
-    {
-      id: 4,
-      title: 'Jogo de Cama 100% Algodão Egípcio - 400 fios',
-      image: 'https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 5,
-      title: 'Organizador de Utensílios para Cozinha - Bambu',
-      image: 'https://images.unsplash.com/photo-1520981825232-ece5ef2cab8b?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 6,
-      title: 'Puff Decorativo Multifuncional com Baú',
-      image: 'https://images.unsplash.com/photo-1615968679312-9b7ed9f04e79?w=800&auto=format&fit=crop',
-      store: 'Shopee',
-      url: 'https://www.shopee.com.br',
-    },
-  ];
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const { data: products, isLoading } = useProducts({ 
+    color: 'casa',
+    category: selectedCategory 
+  });
 
   const categories = [
-    { name: 'Todos', icon: <Grid2X2 size={20} /> },
-    { name: 'Decoração', icon: <Home size={20} /> },
-    { name: 'Iluminação', icon: <LampDesk size={20} /> },
-    { name: 'Móveis', icon: <Sofa size={20} /> },
-    { name: 'Cama & Banho', icon: <Bed size={20} /> },
+    { name: undefined, label: 'Todos', icon: <Grid2X2 size={20} /> },
+    { name: 'Decoração', label: 'Decoração', icon: <Home size={20} /> },
+    { name: 'Iluminação', label: 'Iluminação', icon: <LampDesk size={20} /> },
+    { name: 'Móveis', label: 'Móveis', icon: <Sofa size={20} /> },
+    { name: 'Cama & Banho', label: 'Cama & Banho', icon: <Bed size={20} /> },
   ];
+
+  const handleCategoryClick = (category: string | undefined) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -86,10 +52,15 @@ const LarDoceLar: React.FC = () => {
               {categories.map((category, index) => (
                 <button 
                   key={index} 
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-vovo-casa hover:bg-vovo-casaDark whitespace-nowrap"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap ${
+                    selectedCategory === category.name 
+                      ? 'bg-vovo-casaDark text-white' 
+                      : 'bg-vovo-casa hover:bg-vovo-casaDark'
+                  }`}
+                  onClick={() => handleCategoryClick(category.name)}
                 >
                   {category.icon}
-                  <span>{category.name}</span>
+                  <span>{category.label}</span>
                 </button>
               ))}
             </div>
@@ -101,18 +72,33 @@ const LarDoceLar: React.FC = () => {
           <div className="container-custom">
             <h2 className="text-3xl font-playfair font-bold mb-8 text-center">Aconchego para o seu Lar</h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  title={product.title}
-                  image={product.image}
-                  store={product.store}
-                  url={product.url}
-                  color="casa"
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="rounded-lg overflow-hidden bg-white shadow-md">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="p-4">
+                      <Skeleton className="h-5 w-4/5 mb-2" />
+                      <Skeleton className="h-4 w-3/5 mb-4" />
+                      <Skeleton className="h-10 w-full rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products && products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    title={product.title}
+                    image={product.image}
+                    store={product.store}
+                    url={product.url}
+                    color={product.color}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>

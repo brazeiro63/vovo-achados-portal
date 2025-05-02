@@ -1,64 +1,30 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { Brush, Scissors, Wrench, PaintBucket, Grid2X2 } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const OficinaCriativa: React.FC = () => {
-  // Sample products - in a real application, these would come from an API or database
-  const products = [
-    {
-      id: 1,
-      title: 'Kit Completo para Artesanato em Feltro',
-      image: 'https://images.unsplash.com/photo-1499744937866-d7e566a20a61?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 2,
-      title: 'Máquina de Costura Portátil para Iniciantes',
-      image: 'https://images.unsplash.com/photo-1545342084-d03fe58ea023?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 3,
-      title: 'Conjunto de Ferramentas para Marcenaria - 24 peças',
-      image: 'https://images.unsplash.com/photo-1426927308491-6380b6a9936f?w=800&auto=format&fit=crop',
-      store: 'Shopee',
-      url: 'https://www.shopee.com.br',
-    },
-    {
-      id: 4,
-      title: 'Kit de Tintas Acrílicas Profissionais - 12 cores',
-      image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 5,
-      title: 'Impressora 3D Compacta para Pequenos Negócios',
-      image: 'https://images.unsplash.com/photo-1563787765755-b1b8efb49405?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 6,
-      title: 'Curso Digital: Como Montar seu Pequeno Negócio Artesanal',
-      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop',
-      store: 'Hotmart',
-      url: 'https://www.hotmart.com',
-    },
-  ];
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const { data: products, isLoading } = useProducts({ 
+    color: 'empreendedorismo',
+    category: selectedCategory
+  });
 
   const categories = [
-    { name: 'Todos', icon: <Grid2X2 size={20} /> },
-    { name: 'Artesanato', icon: <Brush size={20} /> },
-    { name: 'Ferramentas', icon: <Wrench size={20} /> },
-    { name: 'Tecidos', icon: <Scissors size={20} /> },
-    { name: 'Tintas', icon: <PaintBucket size={20} /> },
+    { name: undefined, label: 'Todos', icon: <Grid2X2 size={20} /> },
+    { name: 'Artesanato', label: 'Artesanato', icon: <Brush size={20} /> },
+    { name: 'Ferramentas', label: 'Ferramentas', icon: <Wrench size={20} /> },
+    { name: 'Tecidos', label: 'Tecidos', icon: <Scissors size={20} /> },
+    { name: 'Tintas', label: 'Tintas', icon: <PaintBucket size={20} /> },
   ];
+
+  const handleCategoryClick = (category: string | undefined) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -86,10 +52,15 @@ const OficinaCriativa: React.FC = () => {
               {categories.map((category, index) => (
                 <button 
                   key={index} 
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-vovo-empreendedorismo hover:bg-vovo-empreendedorismoDark whitespace-nowrap"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap ${
+                    selectedCategory === category.name 
+                      ? 'bg-vovo-empreendedorismoDark text-white' 
+                      : 'bg-vovo-empreendedorismo hover:bg-vovo-empreendedorismoDark'
+                  }`}
+                  onClick={() => handleCategoryClick(category.name)}
                 >
                   {category.icon}
-                  <span>{category.name}</span>
+                  <span>{category.label}</span>
                 </button>
               ))}
             </div>
@@ -101,18 +72,33 @@ const OficinaCriativa: React.FC = () => {
           <div className="container-custom">
             <h2 className="text-3xl font-playfair font-bold mb-8 text-center">Ferramentas para Criar e Empreender</h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  title={product.title}
-                  image={product.image}
-                  store={product.store}
-                  url={product.url}
-                  color="empreendedorismo"
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="rounded-lg overflow-hidden bg-white shadow-md">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="p-4">
+                      <Skeleton className="h-5 w-4/5 mb-2" />
+                      <Skeleton className="h-4 w-3/5 mb-4" />
+                      <Skeleton className="h-10 w-full rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products && products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    title={product.title}
+                    image={product.image}
+                    store={product.store}
+                    url={product.url}
+                    color={product.color}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>

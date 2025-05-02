@@ -1,62 +1,29 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import { Baby, Book, Rocket, Puzzle, Backpack } from 'lucide-react';
+import { Baby, Book, Rocket, Puzzle } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MundoMagicoInfantil: React.FC = () => {
-  // Sample products - in a real application, these would come from an API or database
-  const products = [
-    {
-      id: 1,
-      title: 'Kit de Fantasias de Super-Heróis para Crianças',
-      image: 'https://images.unsplash.com/photo-1535572290543-960a8046f5af?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 2,
-      title: 'Livro Infantil Interativo - Aventuras na Floresta Encantada',
-      image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 3,
-      title: 'Quebra-Cabeça Educativo de Madeira - 100 peças',
-      image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&auto=format&fit=crop',
-      store: 'Shopee',
-      url: 'https://www.shopee.com.br',
-    },
-    {
-      id: 4,
-      title: 'Conjunto de Brinquedos Montessori para Desenvolvimento Sensorial',
-      image: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&auto=format&fit=crop',
-      store: 'Amazon',
-      url: 'https://www.amazon.com.br',
-    },
-    {
-      id: 5,
-      title: 'Kit de Artes e Pintura para Crianças',
-      image: 'https://images.unsplash.com/photo-1560785496-3c9d27877182?w=800&auto=format&fit=crop',
-      store: 'Mercado Livre',
-      url: 'https://www.mercadolivre.com.br',
-    },
-    {
-      id: 6,
-      title: 'Tenda de Brincadeira para Crianças - Castelo Encantado',
-      image: 'https://images.unsplash.com/photo-1597843786411-a7fa8ad44a95?w=800&auto=format&fit=crop',
-      store: 'Shopee',
-      url: 'https://www.shopee.com.br',
-    },
-  ];
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const { data: products, isLoading } = useProducts({ 
+    color: 'infantil',
+    category: selectedCategory
+  });
 
   const categories = [
-    { name: 'Todos', icon: <Baby size={20} /> },
-    { name: 'Livros', icon: <Book size={20} /> },
-    { name: 'Brinquedos', icon: <Puzzle size={20} /> },
-    { name: 'Fantasias', icon: <Rocket size={20} /> },
+    { name: undefined, label: 'Todos', icon: <Baby size={20} /> },
+    { name: 'Livros', label: 'Livros', icon: <Book size={20} /> },
+    { name: 'Brinquedos', label: 'Brinquedos', icon: <Puzzle size={20} /> },
+    { name: 'Fantasias', label: 'Fantasias', icon: <Rocket size={20} /> },
   ];
+
+  const handleCategoryClick = (category: string | undefined) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -84,10 +51,15 @@ const MundoMagicoInfantil: React.FC = () => {
               {categories.map((category, index) => (
                 <button 
                   key={index} 
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-vovo-infantil hover:bg-vovo-infantilDark whitespace-nowrap"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap ${
+                    selectedCategory === category.name 
+                      ? 'bg-vovo-infantilDark text-white' 
+                      : 'bg-vovo-infantil hover:bg-vovo-infantilDark'
+                  }`}
+                  onClick={() => handleCategoryClick(category.name)}
                 >
                   {category.icon}
-                  <span>{category.name}</span>
+                  <span>{category.label}</span>
                 </button>
               ))}
             </div>
@@ -99,18 +71,33 @@ const MundoMagicoInfantil: React.FC = () => {
           <div className="container-custom">
             <h2 className="text-3xl font-playfair font-bold mb-8 text-center">Nossos Achados para os Pequenos</h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  title={product.title}
-                  image={product.image}
-                  store={product.store}
-                  url={product.url}
-                  color="infantil"
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="rounded-lg overflow-hidden bg-white shadow-md">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="p-4">
+                      <Skeleton className="h-5 w-4/5 mb-2" />
+                      <Skeleton className="h-4 w-3/5 mb-4" />
+                      <Skeleton className="h-10 w-full rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products && products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    title={product.title}
+                    image={product.image}
+                    store={product.store}
+                    url={product.url}
+                    color={product.color}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
