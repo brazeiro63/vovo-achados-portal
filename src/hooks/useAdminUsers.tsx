@@ -59,9 +59,13 @@ export const useAdminUsers = () => {
     setIsSubmitting(true);
     try {
       console.log("Updating user profile:", profile);
+      
+      // Removendo campos que não existem na tabela profiles
+      const { email, created_at, ...profileData } = profile;
+      
       const { data, error } = await supabase
         .from('profiles')
-        .update(profile)
+        .update(profileData)
         .eq('id', profile.id)
         .select()
         .single();
