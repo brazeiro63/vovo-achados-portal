@@ -256,7 +256,6 @@ const UsersManagement = () => {
                 <Select
                   value={formData.role}
                   onValueChange={(value) => handleSelectChange("role", value)}
-                  disabled={currentUser?.id === editingUser?.id} // Prevent changing own role
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione a função" />
@@ -266,11 +265,6 @@ const UsersManagement = () => {
                     <SelectItem value="admin">Administrador</SelectItem>
                   </SelectContent>
                 </Select>
-                {currentUser?.id === editingUser?.id && (
-                  <p className="col-span-4 text-xs text-yellow-600 ml-auto">
-                    Você não pode alterar sua própria função.
-                  </p>
-                )}
               </div>
             </div>
             
