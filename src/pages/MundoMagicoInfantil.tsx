@@ -94,6 +94,7 @@ const MundoMagicoInfantil: React.FC = () => {
                     url={product.url}
                     color={product.color}
                     price={product.price}
+                    preco_de={product.preco_de}
                   />
                 ))}
               </div>

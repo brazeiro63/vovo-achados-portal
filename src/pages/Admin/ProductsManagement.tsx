@@ -54,7 +54,8 @@ const ProductsManagement = () => {
     url: "",
     color: "",
     category: "",
-    price: 0
+    price: 0,
+    preco_de: null
   });
 
   const filteredProducts = products.filter(product => 
@@ -67,9 +68,9 @@ const ProductsManagement = () => {
     const { name, value } = e.target;
     
     // Tratar o campo de preço para garantir formato correto de número
-    if (name === 'price') {
+    if (name === 'price' || name === 'preco_de') {
       // Substituir vírgula por ponto e converter para número
-      const numericValue = parseFloat(value.replace(',', '.')) || 0;
+      const numericValue = value === '' ? null : parseFloat(value.replace(',', '.')) || 0;
       setFormData(prev => ({ ...prev, [name]: numericValue }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -89,7 +90,8 @@ const ProductsManagement = () => {
       url: "",
       color: "",
       category: "",
-      price: 0
+      price: 0,
+      preco_de: null
     });
     setIsDialogOpen(true);
   };
@@ -103,7 +105,8 @@ const ProductsManagement = () => {
       url: product.url,
       color: product.color,
       category: product.category,
-      price: product.price || 0
+      price: product.price || 0,
+      preco_de: product.preco_de
     });
     setIsDialogOpen(true);
   };
@@ -178,6 +181,7 @@ const ProductsManagement = () => {
               <TableRow>
                 <TableHead>Título</TableHead>
                 <TableHead>Preço</TableHead>
+                <TableHead>Preço De</TableHead>
                 <TableHead>Loja</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Cor</TableHead>
@@ -189,6 +193,7 @@ const ProductsManagement = () => {
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.title}</TableCell>
                   <TableCell>{formatPrice(product.price)}</TableCell>
+                  <TableCell>{formatPrice(product.preco_de)}</TableCell>
                   <TableCell>{product.store}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.color}</TableCell>
@@ -246,10 +251,27 @@ const ProductsManagement = () => {
                   type="number"
                   step="0.01"
                   min="0"
-                  value={formData.price}
+                  value={formData.price ?? ''}
                   onChange={handleInputChange}
                   className="col-span-3"
                   required
+                />
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="preco_de" className="text-right">
+                  Preço De (R$)
+                </Label>
+                <Input
+                  id="preco_de"
+                  name="preco_de"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.preco_de ?? ''}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                  placeholder="Preço original (opcional)"
                 />
               </div>
               

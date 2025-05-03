@@ -58,6 +58,7 @@ export type Database = {
           created_at: string | null
           id: string
           image: string
+          preco_de: number | null
           price: number | null
           store: string
           title: string
@@ -70,6 +71,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image: string
+          preco_de?: number | null
           price?: number | null
           store: string
           title: string
@@ -82,6 +84,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image?: string
+          preco_de?: number | null
           price?: number | null
           store?: string
           title?: string
@@ -123,7 +126,7 @@ export type Database = {
     }
     Functions: {
       generate_slug: {
-        Args: { title: string }
+        Args: { title_text: string }
         Returns: string
       }
     }

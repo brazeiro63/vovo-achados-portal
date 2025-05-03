@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
@@ -96,6 +95,7 @@ const OficinaCriativa: React.FC = () => {
                     url={product.url}
                     color={product.color}
                     price={product.price}
+                    preco_de={product.preco_de}
                   />
                 ))}
               </div>
