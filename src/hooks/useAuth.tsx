@@ -26,13 +26,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Configurar o listener para mudanças de autenticação
+    // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
+      (event, currentSession) => {
+        console.log("Auth state changed:", event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
-        // Verificar role do usuário quando a sessão muda
+        // Verify user role when session changes
         if (currentSession?.user) {
           checkUserRole(currentSession.user.id);
         } else {
@@ -43,24 +44,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Verificar se já existe uma sessão ativa
+    // Then check for existing session
     const getInitialSession = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      // Verificar role do usuário na inicialização
-      if (currentSession?.user) {
-        checkUserRole(currentSession.user.id);
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log("Initial session check:", currentSession?.user?.email);
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        // Check user role on initialization
+        if (currentSession?.user) {
+          checkUserRole(currentSession.user.id);
+        }
+      } catch (error) {
+        console.error("Error getting initial session:", error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     getInitialSession();
 
-    // Limpar o listener ao desmontar o componente
-    return () => subscription.unsubscribe();
+    // Clean up the listener when component unmounts
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkUserRole = async (userId: string) => {
@@ -68,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Query the profiles table to check if the user is an admin
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')  // Select all columns to ensure we get any that exist
+        .select('*')
         .eq('id', userId)
         .single();
         
@@ -79,7 +87,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       
       // Safely check if the data has a role property and if it's 'admin'
-      // Using optional chaining and type assertion to handle potential missing fields
       const profile = data as any;
       setIsAdmin(profile && profile.role === 'admin');
     } catch (err) {
@@ -88,18 +95,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Fixed signOut function to properly use the supabase client
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Error signing out:", error);
-        throw error;
-      }
-      // Clear local state after successful signout
+      console.log("Signing out...");
+      // Clear state first to prevent UI flashes
       setSession(null);
       setUser(null);
       setIsAdmin(false);
+      
+      // Then call Supabase signOut
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error during sign out:", error);
+        throw error;
+      }
+      
+      console.log("Sign out successful");
     } catch (err) {
       console.error("Exception during sign out:", err);
       throw err;
