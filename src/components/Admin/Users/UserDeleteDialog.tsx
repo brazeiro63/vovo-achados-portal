@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 interface UserDeleteDialogProps {
   open: boolean;
@@ -35,7 +36,7 @@ const UserDeleteDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>
+          <AlertDialogAction onClick={onConfirm} className="bg-red-600 hover:bg-red-700">
             Excluir
           </AlertDialogAction>
         </AlertDialogFooter>

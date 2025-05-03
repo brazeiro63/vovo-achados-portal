@@ -88,8 +88,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Fixed signOut function to properly use the supabase client
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error);
+        throw error;
+      }
+      // Clear local state after successful signout
+      setSession(null);
+      setUser(null);
+      setIsAdmin(false);
+    } catch (err) {
+      console.error("Exception during sign out:", err);
+      throw err;
+    }
   };
 
   return (

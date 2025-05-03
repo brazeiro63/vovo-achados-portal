@@ -16,9 +16,14 @@ const NavBar: React.FC = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    toast.success("Você saiu da sua conta");
-    navigate('/');
+    try {
+      await signOut();
+      toast.success("Você saiu da sua conta");
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast.error("Erro ao sair da conta. Tente novamente.");
+    }
   };
 
   return (
@@ -95,7 +100,15 @@ const NavBar: React.FC = () => {
                   </Link>
                 )}
                 
-                <button onClick={handleSignOut} className="text-left text-gray-600 hover:text-gray-900 py-2">Sair</button>
+                <button 
+                  onClick={() => {
+                    toggleMenu();
+                    handleSignOut();
+                  }} 
+                  className="text-left text-gray-600 hover:text-gray-900 py-2"
+                >
+                  Sair
+                </button>
               </>
             ) : (
               <>
