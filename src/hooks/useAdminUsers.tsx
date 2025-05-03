@@ -10,6 +10,7 @@ export type UserProfile = {
   username?: string | null;
   full_name?: string | null;
   avatar_url?: string | null;
+  phone?: string | null;
   role: 'user' | 'admin';
   created_at?: string;
 };
@@ -23,7 +24,7 @@ export const useAdminUsers = () => {
     queryKey: ["admin-users"],
     queryFn: async () => {
       try {
-        // Get profiles from the profiles table
+        // Get all profiles - RLS policies will ensure only appropriate profiles are returned
         const { data: profiles, error } = await supabase
           .from('profiles')
           .select('*');

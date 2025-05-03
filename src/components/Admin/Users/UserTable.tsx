@@ -9,7 +9,7 @@ import {
   TableCell 
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { User, Pencil, Trash } from "lucide-react";
+import { User, Pencil, Trash, Phone } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface UserTableProps {
@@ -32,7 +32,8 @@ const UserTable = ({
   const filteredUsers = users.filter(user => 
     (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
     (user.username?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-    (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+    (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+    (user.phone?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString?: string) => {
@@ -63,6 +64,7 @@ const UserTable = ({
           <TableRow>
             <TableHead>Email/Usuário</TableHead>
             <TableHead>Nome Completo</TableHead>
+            <TableHead>Telefone</TableHead>
             <TableHead>Função</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
@@ -77,6 +79,14 @@ const UserTable = ({
                 </div>
               </TableCell>
               <TableCell>{user.full_name || "-"}</TableCell>
+              <TableCell>
+                {user.phone ? (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    {user.phone}
+                  </div>
+                ) : "-"}
+              </TableCell>
               <TableCell>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   user.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'

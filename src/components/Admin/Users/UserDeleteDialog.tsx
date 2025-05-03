@@ -24,6 +24,7 @@ const UserDeleteDialog = ({
   user,
   onConfirm
 }: UserDeleteDialogProps) => {
+  // Usar nome completo, nome de usuário ou email para identificar o usuário, em ordem de preferência
   const displayName = user?.full_name || user?.username || user?.email || "este usuário";
   
   return (

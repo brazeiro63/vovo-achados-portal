@@ -38,7 +38,8 @@ const UserEditDialog = ({
     full_name: "",
     username: "",
     email: "",
-    role: "user"
+    role: "user",
+    phone: ""
   });
 
   useEffect(() => {
@@ -47,7 +48,8 @@ const UserEditDialog = ({
         full_name: user.full_name || "",
         username: user.username || "",
         email: user.email || "",
-        role: user.role
+        role: user.role,
+        phone: user.phone || ""
       });
     }
   }, [user]);
@@ -112,6 +114,20 @@ const UserEditDialog = ({
                 value={formData.full_name || ""}
                 onChange={handleInputChange}
                 className="col-span-3"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">
+                Telefone
+              </Label>
+              <Input
+                id="phone"
+                name="phone"
+                value={formData.phone || ""}
+                onChange={handleInputChange}
+                className="col-span-3"
+                placeholder="(00) 00000-0000"
               />
             </div>
             
