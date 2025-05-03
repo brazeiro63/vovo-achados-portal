@@ -15,6 +15,8 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import ResetPassword from "./pages/ResetPassword";
+import ChangePassword from "./pages/ChangePassword";
 
 // Admin Components
 import AdminLayout from "./components/AdminLayout";
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>

@@ -1,4 +1,3 @@
-
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import NavBar from "@/components/NavBar";
@@ -14,6 +13,8 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import ProductCard from "@/components/ProductCard";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { session, user } = useAuth();

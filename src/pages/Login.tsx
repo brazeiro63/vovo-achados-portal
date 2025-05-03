@@ -9,22 +9,44 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/components/ui/sonner";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Mail } from "lucide-react";
 
 type LoginFormValues = {
   email: string;
   password: string;
 };
 
+type ResetPasswordFormValues = {
+  email: string;
+};
+
 const Login = () => {
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<LoginFormValues>();
+
+  const {
+    register: registerReset,
+    handleSubmit: handleSubmitReset,
+    formState: { errors: resetErrors }
+  } = useForm<ResetPasswordFormValues>();
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -47,6 +69,28 @@ const Login = () => {
       setLoginError("Ocorreu um erro durante o login. Por favor tente novamente.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const onResetPasswordSubmit = async (data: ResetPasswordFormValues) => {
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) {
+        console.error("Erro ao enviar email de recuperação:", error);
+        toast.error("Não foi possível enviar o email de recuperação.");
+      } else {
+        toast.success("Email de recuperação enviado com sucesso! Verifique sua caixa de entrada.");
+        setIsResetDialogOpen(false);
+      }
+    } catch (error) {
+      console.error("Erro ao solicitar recuperação de senha:", error);
+      toast.error("Ocorreu um erro ao solicitar a recuperação de senha.");
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -98,6 +142,52 @@ const Login = () => {
             <div>
               <div className="flex justify-between items-center">
                 <Label htmlFor="password">Senha</Label>
+                <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="link" className="text-sm text-blue-600 p-0" type="button">
+                      Esqueceu a senha?
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Recuperar senha</DialogTitle>
+                      <DialogDescription>
+                        Insira seu email para receber um link de recuperação de senha.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmitReset(onResetPasswordSubmit)}>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="reset-email">Email</Label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                            <Input
+                              id="reset-email"
+                              className="pl-10"
+                              placeholder="seu@email.com"
+                              type="email"
+                              {...registerReset("email", {
+                                required: "Email é obrigatório",
+                                pattern: {
+                                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                  message: "Email inválido"
+                                }
+                              })}
+                            />
+                          </div>
+                          {resetErrors.email && (
+                            <p className="text-red-500 text-xs mt-1">{resetErrors.email.message}</p>
+                          )}
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" disabled={resetLoading}>
+                          {resetLoading ? "Enviando..." : "Enviar link de recuperação"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <Input
                 id="password"
