@@ -64,8 +64,7 @@ const UserTable = ({
             <TableHead>Email/Usuário</TableHead>
             <TableHead>Nome Completo</TableHead>
             <TableHead>Função</TableHead>
-            <TableHead>Criado em</TableHead>
-            <TableHead className="w-[100px]">Ações</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -85,7 +84,6 @@ const UserTable = ({
                   {user.role === 'admin' ? 'Administrador' : 'Usuário'}
                 </span>
               </TableCell>
-              <TableCell>{formatDate(user.created_at)}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button 

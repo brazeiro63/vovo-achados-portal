@@ -10,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 
 interface UserDeleteDialogProps {
   open: boolean;
@@ -25,13 +24,15 @@ const UserDeleteDialog = ({
   user,
   onConfirm
 }: UserDeleteDialogProps) => {
+  const displayName = user?.full_name || user?.username || user?.email || "este usuário";
+  
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja excluir o usuário "{user?.username || user?.email}"? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir o usuário "{displayName}"? Esta ação não pode ser desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
