@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ExternalLink, Heart } from 'lucide-react';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface ProductCardProps {
   title: string;
@@ -38,12 +39,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, image, store, url, col
 
   return (
     <div className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white h-full flex flex-col">
-      <div className="h-48 overflow-hidden">
-        <img 
-          src={image} 
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-        />
+      <div className="w-full overflow-hidden">
+        <AspectRatio ratio={1 / 1} className="bg-gray-100">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </AspectRatio>
       </div>
       <div className="p-4 flex flex-col flex-grow">
         <h3 className="font-medium text-gray-800 mb-2 line-clamp-2 h-12">{title}</h3>

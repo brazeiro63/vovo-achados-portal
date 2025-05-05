@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pencil, Trash, Plus } from "lucide-react";
 import { Product } from "@/hooks/useProducts";
+import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ProductsManagement = () => {
   const { products, isLoading, isSubmitting, createProduct, updateProduct, deleteProduct } = useAdminProducts();
@@ -144,6 +146,18 @@ const ProductsManagement = () => {
     });
   };
 
+  const renderProductImage = (imageUrl: string, productTitle: string) => (
+    <div className="w-16 h-16 overflow-hidden rounded-md">
+      <AspectRatio ratio={1 / 1} className="bg-gray-100">
+        <img
+          src={imageUrl}
+          alt={productTitle}
+          className="w-full h-full object-cover"
+        />
+      </AspectRatio>
+    </div>
+  );
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -179,6 +193,7 @@ const ProductsManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Imagem</TableHead>
                 <TableHead>Título</TableHead>
                 <TableHead>Preço</TableHead>
                 <TableHead>Preço De</TableHead>
@@ -191,6 +206,7 @@ const ProductsManagement = () => {
             <TableBody>
               {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
+                  <TableCell>{renderProductImage(product.image, product.title)}</TableCell>
                   <TableCell className="font-medium">{product.title}</TableCell>
                   <TableCell>{formatPrice(product.price)}</TableCell>
                   <TableCell>{formatPrice(product.preco_de)}</TableCell>
@@ -218,7 +234,7 @@ const ProductsManagement = () => {
 
       {/* Product Form Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingProduct ? "Editar Produto" : "Adicionar Novo Produto"}
@@ -275,18 +291,35 @@ const ProductsManagement = () => {
                 />
               </div>
               
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="image" className="text-right">
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="image" className="text-right pt-2">
                   URL da Imagem
                 </Label>
-                <Input
-                  id="image"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  className="col-span-3"
-                  required
-                />
+                <div className="col-span-3 space-y-2">
+                  <Input
+                    id="image"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formData.image && (
+                    <Card className="overflow-hidden w-24 h-24">
+                      <CardContent className="p-0">
+                        <AspectRatio ratio={1 / 1} className="bg-gray-100">
+                          <img
+                            src={formData.image}
+                            alt="Pré-visualização"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "https://via.placeholder.com/150?text=Erro";
+                            }}
+                          />
+                        </AspectRatio>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               </div>
               
               <div className="grid grid-cols-4 items-center gap-4">

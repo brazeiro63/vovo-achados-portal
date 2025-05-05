@@ -1,3 +1,4 @@
+
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import NavBar from "@/components/NavBar";
@@ -15,6 +16,7 @@ import {
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const Dashboard = () => {
   const { session, user } = useAuth();
@@ -71,7 +73,9 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="rounded-lg overflow-hidden border border-gray-100">
-                      <Skeleton className="h-48 w-full" />
+                      <AspectRatio ratio={1 / 1}>
+                        <Skeleton className="h-full w-full" />
+                      </AspectRatio>
                       <div className="p-4">
                         <Skeleton className="h-5 w-4/5 mb-2" />
                         <Skeleton className="h-4 w-3/5" />
